@@ -20,7 +20,7 @@ This project demonstrate how to use `Infront Connect Market Data` APIs provided 
 - pip install -r requirements.txt
 - Start sever by `./server.py`
 - Start a consumer by `./consumer.py`
-It is possible to start multiple consumers and they all get the same data as `server` broadcasts mess
+It is possible to start multiple consumers and they all get the same data as `server` broadcasts messages.
 
 
 ### APIs
