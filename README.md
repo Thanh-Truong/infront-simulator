@@ -5,7 +5,7 @@ This project demonstrates how to use `Infront Connect Market Data` APIs provided
 
 * Communication protocol is Websocket
 * `server` (simulator of Infront server)
-    * `server` is built as a skeleton, which can be  extended by following this [note](##extend-server)
+    * `server` is built as a skeleton, which can be  extended by following this [note](#extend-server)
     * It reponses to incoming requests at different endpoints (paths).
     * `server` will broadcast (streaming) data to registered `consumer`(s). Another streaming stragety such as round-robin can be easily implemented.
 
