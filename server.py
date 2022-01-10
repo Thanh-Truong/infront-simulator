@@ -64,7 +64,6 @@ def md_subscribe_instrument_request(websocket, path, request):
 def md_instrument_update(websocket, path, request):
     # save websocket if the session_token is valid
     session_token = request['session_token']
-    print(session_token)
     if session_token == SESSION_TOKEN:
         print('Register a consumer')
         USERS_WEBSOCKETS['websockets'].append(websocket)
@@ -78,11 +77,14 @@ async def producer():
     print('Start Producer job')
     while True:
         for websocket in USERS_WEBSOCKETS['websockets']:
-            from datetime import datetime
-            now = datetime.now()
-            date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
-            print(f'Sending {date_time}')
-            await websocket.send(date_time)
+            try:
+                from datetime import datetime
+                now = datetime.now()
+                date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+                print(f'Sending {date_time}')
+                await websocket.send(date_time)
+            except websockets.ConnectionClosedOK as ex:
+                USERS_WEBSOCKETS['websockets'].remove(websocket)
         await asyncio.sleep(0.5)  # run forever
 
 async def handler(websocket, path):

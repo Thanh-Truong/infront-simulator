@@ -5,6 +5,7 @@ from asyncio.tasks import sleep
 import websockets
 import json
 import constants
+import time
 
 SERVER_URL = 'ws://localhost:8765'
 LOGIN_REQUEST = {
@@ -22,6 +23,7 @@ LOGIN_REQUEST = {
 class ClientSession(object):
     token = None
     timeout = 0
+    time_to_live = constants.TIME_TO_LIVE
     is_registered = False
 
 async def login(session):
@@ -39,9 +41,21 @@ async def login(session):
         else:
             print('Login failed !')
 
+async def register(session, websocket):
+    if session.token and session.token != "0":
+        if not session.is_registered:
+            print('Inform server that I am logged in and ready')
+            await websocket.send(json.dumps({"session_token": session.token}))
+            session.is_registered = True
+    else:
+        print('Not be able to login yet')
+
 async def consumer(session):
+    start = time.time()
+    elapsed = 0
     async with websockets.connect(SERVER_URL + '/md_instrument_update') as websocket:
-        while True:
+        while elapsed < session.time_to_live:
+            elapsed = time.time() - start
             if session.token and session.token != "0":
                 if not session.is_registered:
                     print('Inform server that I am logged in and ready')
@@ -53,6 +67,7 @@ async def consumer(session):
                 instrument_update = await websocket.recv()
                 print('Receiving ' + instrument_update)
             await asyncio.sleep(0.5)
+        print('Bye ! I am going away')
 
 def main():
     with open('active_session.json') as f:
